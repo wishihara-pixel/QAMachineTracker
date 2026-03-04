@@ -1,92 +1,55 @@
-# Deploy frontend to Vercel, Mac as backend
+# Deploy Machine Grid on Vercel — one link, everyone sees the same data
 
-The **app UI** is hosted on Vercel (one link for everyone). The **data** still lives on your Mac — your Mac runs `server.py` and the frontend calls it for API requests. Only people who can reach your Mac’s IP will get live data; everyone else will see the UI but get “Local only” until they’re on a network that can reach your Mac.
-
-**Why the app looks empty on the Vercel link:** Vercel is HTTPS, your Mac is HTTP. Browsers block HTTPS→HTTP requests (mixed content), so the app can't load data from your Mac and shows empty. **Use the direct Mac URL** (http://YOUR_IP:8080) so everyone sees the data.
+Use **full Vercel** (frontend + API + Redis): one HTTPS link for the whole team, no Mac needed, no network restrictions.
 
 ---
 
-## 1. Point the frontend at your Mac
+## Option A: Full Vercel (recommended)
 
-Edit **`config.js`** and set your Mac’s URL (same one you use for coworkers today):
+**One link. Everyone gets the same view. No Mac, no VPN issues.**
 
-```js
-window.MACHINE_GRID_API = 'http://10.112.75.223:8080';  // use your real IP
-```
+### 1. Add Upstash Redis to your Vercel project
 
-Get your IP with: `ipconfig getifaddr en0`  
-If your IP changes (e.g. new Wi‑Fi), update this and redeploy.
+1. Open your project on [vercel.com](https://vercel.com) (e.g. QAMachineTracker).
+2. Go to **Storage** (or **Integrations** / **Marketplace**).
+3. Create or connect **Upstash Redis** (free tier is enough).
+4. Link it to this project. Vercel will add `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` automatically.
 
----
+### 2. Deploy from GitHub
 
-## 2. Deploy to Vercel
+1. Push the latest code (includes `api/data.js`, `package.json`, empty `config.js`).
+2. In Vercel, trigger a redeploy (Deployments → … → Redeploy), or push a new commit.
+3. Vercel will run `npm install` and deploy the serverless API at `/api/data`.
 
-**Option A: Vercel CLI**
+### 3. Share the link
 
-```bash
-cd "/Users/wishihara/Documents/Task Tracker"
-npx vercel
-```
+- Use your Vercel URL (e.g. `https://qamachinetracker-xxx.vercel.app`).
+- Everyone who opens it sees the **same** machines and stickies. Data is stored in Redis; the app is pre-seeded with your current machines and stickies on first load.
 
-Follow the prompts (log in if needed, accept defaults). Vercel will give you a URL like `https://task-tracker-xxx.vercel.app`.
+### 4. No Mac needed
 
-**Option B: GitHub + Vercel**
-
-1. Push this folder to your repo: [github.com/wishihara-pixel/QAMachineTracker](https://github.com/wishihara-pixel/QAMachineTracker)
-2. Go to [vercel.com](https://vercel.com) → New Project → Import that repo.
-3. Root directory: leave as `.` (project root).
-4. Build: leave empty (static site).
-5. Deploy.
+- You don’t run `server.py` for this. The backend is the Vercel serverless API + Redis.
+- `config.js` is left **empty** so the app uses the same origin (`/api/data` on Vercel).
 
 ---
 
-## 3. What to deploy
+## Option B: Vercel frontend + Mac backend (legacy)
 
-Vercel will serve everything in the project. The app only needs:
+Only if you must keep the backend on your Mac:
 
-- `index.html`
-- `styles.css`
-- `app.js`
-- `config.js`
+1. Set **`config.js`** to your Mac URL: `window.MACHINE_GRID_API = 'http://YOUR_MAC_IP:8080';`
+2. Run **`python3 server.py`** on your Mac and keep it running.
+3. Share the **Mac URL** with coworkers (not the Vercel URL), because browsers block HTTPS→HTTP: **http://YOUR_MAC_IP:8080**
 
-You can add a **`.vercelignore`** so the rest isn’t uploaded (optional):
-
-```
-server.py
-data.json
-serve.sh
-README-NETWORK.md
-DEPLOY-VERCEL.md
-.git
-```
-
----
-
-## 4. Run the backend on your Mac
-
-Keep your Mac running the API while people use the Vercel link:
-
-```bash
-cd "/Users/wishihara/Documents/Task Tracker"
-python3 server.py
-```
-
-Leave this terminal open. The Vercel site will call your Mac at the URL in `config.js`.
-
----
-
-## 5. Share the link
-
-- **Vercel URL** (e.g. `https://your-project.vercel.app`) — share this with coworkers.
-- They open it in a browser. If their device can reach your Mac’s IP (same company Wi‑Fi, no VPN blocking it), they’ll see “Shared — connected to server.” If not, they’ll see “Local only.”
+Everyone must be able to reach your Mac on the network; the Vercel URL will not load data when the backend is on your Mac.
 
 ---
 
 ## Summary
 
-| Where        | What runs                          |
-|-------------|-------------------------------------|
-| **Vercel**  | Frontend only (HTML, CSS, JS)       |
-| **Your Mac**| `server.py` + `data.json` (backend) |
+| Setup              | Link to share        | Who can see data        |
+|--------------------|---------------------|--------------------------|
+| **Full Vercel (A)**| Vercel URL (HTTPS)  | Everyone, one shared view |
+| **Mac backend (B)**| Mac URL (HTTP)      | Only devices that can reach your Mac |
 
-One link for everyone; backend stays on your Mac.
+Use **Option A** so the whole team gets one link and the same view.
