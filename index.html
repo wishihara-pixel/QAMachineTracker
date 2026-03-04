@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Machine Grid</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="header">
+    <h1>Machine Grid</h1>
+    <p class="header__status" id="dataStatus" aria-live="polite">Loading…</p>
+    <form class="add-machine-form" id="addMachineForm">
+      <select id="chipType" required>
+        <option value="">Chip type</option>
+        <option value="QS">QS</option>
+        <option value="V0">V0</option>
+        <option value="PS">PS</option>
+      </select>
+      <select id="motherboard" required>
+        <option value="">Motherboard</option>
+        <option value="TS1">TS1</option>
+        <option value="TS2">TS2</option>
+        <option value="TS3">TS3</option>
+        <option value="TS4">TS4</option>
+        <option value="TS5">TS5</option>
+        <option value="TS6">TS6</option>
+        <option value="TS7">TS7</option>
+        <option value="ES1">ES1</option>
+        <option value="ES2">ES2</option>
+      </select>
+      <input type="text" id="ip" placeholder="IP address" required />
+      <button type="submit">Add machine</button>
+    </form>
+  </header>
+
+  <main class="board">
+    <section class="column column--qs" data-chip="QS">
+      <h2 class="column__title">QS</h2>
+      <div class="machine-grid" id="gridQS"></div>
+    </section>
+    <section class="column column--v0" data-chip="V0">
+      <h2 class="column__title">V0</h2>
+      <div class="machine-grid" id="gridV0"></div>
+    </section>
+    <section class="column column--ps" data-chip="PS">
+      <h2 class="column__title">PS</h2>
+      <div class="machine-grid" id="gridPS"></div>
+    </section>
+  </main>
+
+  <!-- Add sticky modal -->
+  <dialog class="modal" id="stickyModal">
+    <form class="modal__form" id="stickyForm">
+      <h3>Add sticky note</h3>
+      <p class="modal__machine" id="stickyModalMachine"></p>
+      <label>
+        Running (test name)
+        <input type="text" id="stickyRunning" placeholder="Test name" required />
+      </label>
+      <label>
+        Who
+        <input type="text" id="stickyWho" placeholder="Name" required />
+      </label>
+      <div class="modal__actions">
+        <button type="button" class="btn--secondary" id="stickyCancel">Cancel</button>
+        <button type="submit">Add sticky</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Clear note history confirmation modal -->
+  <dialog class="modal" id="clearHistoryModal">
+    <div class="modal__form">
+      <h3>Clear note history?</h3>
+      <p class="modal__message" id="clearHistoryMessage">This will permanently remove all notes (current and history) for this machine. This cannot be undone.</p>
+      <div class="modal__actions">
+        <button type="button" class="btn--secondary" id="clearHistoryCancel">Cancel</button>
+        <button type="button" class="btn--danger" id="clearHistoryConfirm">Clear note history</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

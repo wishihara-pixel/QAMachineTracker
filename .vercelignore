@@ -1,0 +1,8 @@
+server.py
+data.json
+serve.sh
+README-NETWORK.md
+DEPLOY-VERCEL.md
+.git
+*.pyc
+__pycache__
