@@ -2,6 +2,8 @@
 
 The **app UI** is hosted on Vercel (one link for everyone). The **data** still lives on your Mac — your Mac runs `server.py` and the frontend calls it for API requests. Only people who can reach your Mac’s IP will get live data; everyone else will see the UI but get “Local only” until they’re on a network that can reach your Mac.
 
+**Why the app looks empty on the Vercel link:** Vercel is HTTPS, your Mac is HTTP. Browsers block HTTPS→HTTP requests (mixed content), so the app can't load data from your Mac and shows empty. **Use the direct Mac URL** (http://YOUR_IP:8080) so everyone sees the data.
+
 ---
 
 ## 1. Point the frontend at your Mac
@@ -9,7 +11,7 @@ The **app UI** is hosted on Vercel (one link for everyone). The **data** still l
 Edit **`config.js`** and set your Mac’s URL (same one you use for coworkers today):
 
 ```js
-window.MACHINE_GRID_API = 'http://10.112.78.25:8080';  // use your real IP
+window.MACHINE_GRID_API = 'http://10.112.75.223:8080';  // use your real IP
 ```
 
 Get your IP with: `ipconfig getifaddr en0`  
@@ -30,7 +32,7 @@ Follow the prompts (log in if needed, accept defaults). Vercel will give you a U
 
 **Option B: GitHub + Vercel**
 
-1. Push this folder to your repo: [github.com/wishihara-pixel/QAMachineTrackera](https://github.com/wishihara-pixel/QAMachineTrackera)
+1. Push this folder to your repo: [github.com/wishihara-pixel/QAMachineTracker](https://github.com/wishihara-pixel/QAMachineTracker)
 2. Go to [vercel.com](https://vercel.com) → New Project → Import that repo.
 3. Root directory: leave as `.` (project root).
 4. Build: leave empty (static site).

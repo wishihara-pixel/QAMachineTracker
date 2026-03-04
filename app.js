@@ -64,11 +64,16 @@ function load() {
       renderAll();
       startPolling();
     })
-    .catch(() => {
+    .catch((err) => {
       useApi = false;
       loadFromLocalStorage();
       updateDataStatus();
       renderAll();
+      if (API_BASE && document.getElementById('dataStatus')) {
+        const el = document.getElementById('dataStatus');
+        el.textContent = 'Could not reach backend. Use the host URL (e.g. http://HOST_IP:8080) to see shared data.';
+        el.className = 'header__status header__status--local';
+      }
     });
 }
 
