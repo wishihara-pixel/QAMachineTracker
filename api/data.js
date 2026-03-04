@@ -1,6 +1,9 @@
 import { Redis } from '@upstash/redis';
 
-const redis = Redis.fromEnv();
+// Support both Vercel KV env vars (KV_REST_API_*) and Upstash (UPSTASH_REDIS_REST_*)
+const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const redis = url && token ? new Redis({ url, token }) : Redis.fromEnv();
 const KEY = 'machinegrid';
 
 // Seed data when KV is empty (your current machines + stickies)
